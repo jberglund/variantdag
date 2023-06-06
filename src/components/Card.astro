@@ -1,63 +1,92 @@
 ---
+import type { Time } from "../utils/time";
+import { subtractTime } from "../utils/time";
+import type { ThemeType } from "../types/Theme";
+import type { Venue } from "../types/Venue";
+
+export type Theme = "pause" | "developers" | "design";
+
 export interface Props {
-	title: string;
-	body: string;
-	href: string;
+  title: string;
+  startOfDay: Time;
+  from: Time;
+  to: Time;
+  theme: ThemeType;
+  venue?: Venue | [Venue, Venue];
+  description?: string;
 }
 
-const { href, title, body } = Astro.props;
+const { title, venue, from, to, startOfDay, theme } = Astro.props;
+
+const venueString =
+  (Array.isArray(venue) ? venue.join(" / ") : venue) ?? "time-end / -1";
 ---
 
-<li class="link-card">
-	<a href={href}>
-		<h2>
-			{title}
-			<span>&rarr;</span>
-		</h2>
-		<p>
-			{body}
-		</p>
-	</a>
-</li>
+<div
+  class="card"
+  style=`--start-minute: ${subtractTime(startOfDay, from)}; --end-minute: ${subtractTime(startOfDay, to)}; --venue: ${venueString}`
+>
+  <div
+    class="card-inner"
+    style=`--theme-bg: ${theme.background}; --theme-fg: ${theme.text};`
+    }
+  >
+    <div class="content">
+      <h2>
+        {title}
+      </h2>
+      <time>{from} - {to}</time>
+    </div>
+  </div>
+  <!-- <CardDialog /> -->
+</div>
 <style>
-	.link-card {
-		list-style: none;
-		display: flex;
-		padding: 0.25rem;
-		background-color: white;
-		background-image: none;
-		background-size: 400%;
-		border-radius: 0.6rem;
-		background-position: 100%;
-		transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-	}
+  .card {
+    display: flex;
+    width: 100%;
+    color: inherit;
+    display: grid;
+    grid-column: var(--venue);
+    grid-row: calc(var(--start-minute) + var(--schedule-start-offset)) /
+      calc(var(--end-minute) + var(--schedule-start-offset));
+    padding: 0.25rem;
+    container: sidebar / size;
+  }
 
-	.link-card > a {
-		width: 100%;
-		text-decoration: none;
-		line-height: 1.4;
-		padding: 1rem 1.3rem;
-		border-radius: 0.35rem;
-		color: #111;
-		background-color: white;
-		opacity: 0.8;
-	}
-	h2 {
-		margin: 0;
-		font-size: 1.25rem;
-		transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-	p {
-		margin-top: 0.5rem;
-		margin-bottom: 0;
-		color: #444;
-	}
-	.link-card:is(:hover, :focus-within) {
-		background-position: 0;
-		background-image: var(--accent-gradient);
-	}
-	.link-card:is(:hover, :focus-within) h2 {
-		color: rgb(var(--accent));
-	}
+  .card-inner {
+    background-color: var(--theme-bg);
+    color: var(--theme-fg);
+
+    background-position: 100vw 100vh;
+    background-attachment: fixed;
+    border-radius: 5px;
+  }
+  .content {
+    display: grid;
+    align-content: start;
+    padding: 0.5rem;
+    max-width: calc(var(--venue-width));
+    position: sticky;
+    left: 0rem;
+    gap: 0.25rem;
+  }
+  @container sidebar (height < 70px) {
+    .content {
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      gap: 0.5rem;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  p {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+  }
 </style>

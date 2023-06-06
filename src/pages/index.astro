@@ -1,81 +1,143 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import Layout from "../layouts/Layout.astro";
+import Card from "../components/Card.astro";
+import Schedule from "../components/Schedule.astro";
+import type { Time } from "../utils/time";
+import { Theme, ThemeType } from "../types/Theme";
+import type { Venue } from "../types/Venue";
+
+const start = "07:45";
+const end = "16:00";
+
+export type Event = {
+  title: string;
+  from: Time;
+  to: Time;
+  theme: ThemeType;
+  description?: string;
+  venue?: Venue | [Venue, Venue];
+};
+
+const features: Event[] = [
+  { title: "Frokost", from: "07:45", to: "08:15", theme: Theme.FELLES },
+  { title: "Velkommen", from: "08:15", to: "08:30", theme: Theme.FELLES },
+  {
+    title: "Keynote stream fra Oslo",
+    from: "08:30",
+    to: "09:15",
+    theme: Theme.FELLES,
+  },
+  { title: "Pause (10 min)", from: "09:15", to: "09:25", theme: Theme.FELLES },
+  {
+    title: "Hackathon",
+    from: "09:25",
+    to: "11:30",
+    theme: Theme.LÆRE,
+    venue: "kram",
+  },
+  { title: "Lunsj", from: "11:30", to: "12:30", theme: Theme.FELLES },
+  {
+    title: "Hackathon",
+    from: "12:30",
+    to: "13:10",
+    theme: Theme.FELLES,
+    venue: "kram",
+  },
+  {
+    title: "From business to buttons Ellen og Stina Sofie +",
+    from: "09:25",
+    to: "09:55",
+    theme: Theme.LÆRE,
+    venue: "amfiet",
+  },
+  {
+    title: "Pause",
+    from: "09:55",
+    to: "10:00",
+    theme: Theme.FELLES,
+    venue: ["amfiet", "sosialsonen"],
+  },
+  {
+    title: "Design-havarikommisjonen",
+    from: "10:00",
+    to: "11:30",
+    theme: Theme.SKUDD,
+    venue: "amfiet",
+  },
+  {
+    title: "Intro via teams, så workshop",
+    from: "12:30",
+    to: "15:15",
+    venue: "amfiet",
+    description: "Designplan - hva og hvorfor det kan være nyttig",
+    theme: Theme.FELLES,
+  },
+  {
+    title: "Double span all the way",
+    from: "13:10",
+    to: "13:15",
+    theme: Theme.FELLES,
+    venue: ["amfiet", "sosialsonen"],
+  },
+];
 ---
 
 <Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
-	</main>
+  <main>
+    <header class="banner" role="banner">
+      <h1>
+        <!-- <span class="text-gradient">Variantdag</span> 2023.06.02 -->
+        Variantdag<span class="text-gradient">2023.06.02</span>
+      </h1>
+    </header>
+    <Schedule start={start} end={end}>
+      {
+        features.map((feature) => (
+          <Card
+            startOfDay={start}
+            theme={feature.theme}
+            from={feature.from}
+            to={feature.to}
+            title={feature.title}
+            theme={feature.theme}
+            description={feature.description}
+            venue={feature.venue}
+          />
+        ))
+      }
+    </Schedule>
+  </main>
 </Layout>
 
 <style>
-	main {
-		margin: auto;
-		padding: 1.5rem;
-		max-width: 60ch;
-	}
-	h1 {
-		font-size: 3rem;
-		font-weight: 800;
-		margin: 0;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		border: 1px solid rgba(var(--accent), 25%);
-		background-color: white;
-		padding: 1rem;
-		border-radius: 0.4rem;
-	}
-	.instructions code {
-		font-size: 0.875em;
-		font-weight: bold;
-		background: rgba(var(--accent), 12%);
-		color: rgb(var(--accent));
-		border-radius: 4px;
-		padding: 0.3em 0.45em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
-	}
+  body {
+    margin: 0;
+  }
+  main {
+    margin: auto;
+  }
+  h1 {
+    display: grid;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0;
+    height: 200px;
+    align-content: center;
+    text-align: center;
+  }
+  .banner {
+    padding: 1rem;
+  }
+  .text-gradient {
+    background-image: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(
+      212deg in oklab,
+      oklch(55% 0.45 350) 0%,
+      oklch(100% 0.4 95) 102% 102%
+    );
+    background-size: 400%;
+    background-position: 0%;
+  }
 </style>

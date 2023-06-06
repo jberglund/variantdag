@@ -1,0 +1,34 @@
+---
+type Time = `${number}:${number}`;
+
+export interface Props {
+  title: string;
+  //body: string;
+  startOfDay: Time;
+  from: Time;
+  to: Time;
+  venue: "amfiet" | "sosialsonen" | "kram";
+  theme: "pause" | "developers" | "design";
+}
+
+const { title, venue } = Astro.props;
+---
+
+<div
+  class="schedule-venue"
+  style=`grid-row: 1 / span 10; grid-column: ${venue}`
+>
+  <h2>
+    {title}
+  </h2>
+</div>
+<style>
+  .schedule-venue {
+    width: 100%;
+    color: inherit;
+    padding: 1rem 1.3rem;
+
+    scroll-snap-align: start;
+    scroll-padding: 1rem;
+  }
+</style>

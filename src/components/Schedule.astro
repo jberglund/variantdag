@@ -1,0 +1,100 @@
+---
+import type { Venue } from "../types/Venue";
+import type { Time } from "../utils/time";
+import { subtractTime } from "../utils/time";
+export interface Props {
+  start: Time;
+  end: Time;
+}
+
+const times: Time[] = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+const venues: Venue[] = ['amfiet', 'sosialsonen', 'kram', 'lille', 'arbeidssone'];
+const { start, end } = Astro.props;
+---
+
+<div class="schedule">
+    <div class="schedule-venues">
+		<div
+			class="schedule-venue"
+			style=`--start-minute: 1; grid-column: time; grid-row: 1; z-index: 1`
+
+		  >
+
+		  </div>
+		{venues.map((venue) => <div
+			class="schedule-venue"
+			style=`--start-minute: 1; grid-column: ${venue}; grid-row: 1; z-index: 1`
+
+		  >
+		  <div class="schedule-venue-content">
+			{venue}
+			</div>
+		  </div>
+		)}
+	</div>
+    <div class="schedule-grid">
+		
+		{times.map((time) => <div
+			class="schedule-time"
+			style=`--start-minute: ${subtractTime(start, time)};`
+		  >
+			{time}
+		  </div>
+		)}
+      <slot />
+  </div>
+</div>
+
+<style>
+  .schedule {
+    --venue-width: 280px;
+    --schedule-start-offset: 1;
+    --time-indicator-offset: 5rem;
+    display: grid;
+    padding: 0;
+    overflow: scroll;
+    min-height: 100vh;
+    scroll-snap-type: x mandatory;
+	/* scroll-padding: 2rem; */
+	}
+
+  .schedule-time {
+	display: grid;
+	align-items: center;
+	justify-content: center;
+    text-align: start;
+	height: max-content;
+    /* padding: 0.25rem 0.5rem; */
+    grid-column: time;
+    grid-row: var(--start-minute);
+
+	/* writing-mode: vertical-lr;
+    text-orientation: sideways-right;
+    transform: rotate(180deg); */
+  }
+  .schedule-grid, .schedule-venues{
+	display: grid; 
+	grid-template-areas: "time amfiet sosialsonen kram lille arbeidssone";
+    grid-template-columns: var(--time-indicator-offset) repeat(5, var(--venue-width));
+	padding-right: var(--venue-width);
+  }
+  .schedule-grid {
+    grid-auto-rows: 0.5rem;
+    height: auto;
+    gap: 0;
+	max-width: max-content;
+    margin: 0 auto;
+  }
+  .schedule-venue{
+	text-transform: capitalize;
+	
+	position: sticky;
+	top:0;
+	height: max-content;
+	scroll-snap-align: start;
+	/* text-align: center; */
+  }
+  .schedule-venue-content{
+	padding: 0.5rem;
+  }
+</style>
