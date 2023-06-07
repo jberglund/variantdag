@@ -50,13 +50,19 @@ const { start, end } = Astro.props;
     --venue-width: 280px;
     --schedule-start-offset: 1;
     --time-indicator-offset: 5rem;
+	--scroll-padding: 1rem;
+	--one-minute-equals: 0.35rem;
     display: grid;
     padding: 0;
     overflow: scroll;
     min-height: 100vh;
-    scroll-snap-type: x mandatory;
-	/* scroll-padding: 2rem; */
+    scroll-snap-type: x proximity;
+	scroll-padding: var(--scroll-padding);
+	padding-bottom: 10rem;
 	}
+	.schedule::-webkit-scrollbar{
+    display: none;
+  }
 
   .schedule-time {
 	display: grid;
@@ -64,26 +70,34 @@ const { start, end } = Astro.props;
 	justify-content: center;
     text-align: start;
 	height: max-content;
-    /* padding: 0.25rem 0.5rem; */
+    padding: 0.5rem 0rem;
     grid-column: time;
     grid-row: var(--start-minute);
-
-	/* writing-mode: vertical-lr;
-    text-orientation: sideways-right;
-    transform: rotate(180deg); */
+	position: relative;
+	z-index: 10;
   }
+
   .schedule-grid, .schedule-venues{
 	display: grid; 
 	grid-template-areas: "time amfiet sosialsonen kram lille arbeidssone";
     grid-template-columns: var(--time-indicator-offset) repeat(5, var(--venue-width));
 	padding-right: var(--venue-width);
+	margin: 0 auto;
   }
   .schedule-grid {
-    grid-auto-rows: 0.5rem;
+	--lines-color: #474295;
+    grid-auto-rows: var(--one-minute-equals);
     height: auto;
     gap: 0;
 	max-width: max-content;
     margin: 0 auto;
+	background-image: linear-gradient(180deg, var(--lines-color), var(--lines-color) 1px, transparent 1px, transparent 100%), linear-gradient(90deg,  var(--lines-color), var(--lines-color) 1px, transparent 1px, transparent 100%);
+	background-size: var(--venue-width) calc(var(--one-minute-equals) * 15);
+	background-repeat: repeat;
+	background-position-y: -1px;
+	background-position-x: calc(var(--time-indicator-offset));
+	border: 1px solid var(--lines-color);
+	/* background-position-x: calc(var(--time-indicator-offset) - 0.5rem); */
   }
   .schedule-venue{
 	text-transform: capitalize;
@@ -92,7 +106,6 @@ const { start, end } = Astro.props;
 	top:0;
 	height: max-content;
 	scroll-snap-align: start;
-	/* text-align: center; */
   }
   .schedule-venue-content{
 	padding: 0.5rem;
